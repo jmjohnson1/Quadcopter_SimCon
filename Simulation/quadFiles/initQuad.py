@@ -41,14 +41,14 @@ def sys_params():
     # params["interpYaw"] = bool(False)       # Interpolate Yaw setpoints in waypoint trajectory
 
     params["Cd"]         = 0.1
-    params["kTh"]        = 1.076e-5 # thrust coeff (N/(rad/s)^2)  (1.18e-7 N/RPM^2)
+    params["kTh"]        = 1.3047e-5 # thrust coeff (N/(rad/s)^2)  (1.18e-7 N/RPM^2)
     params["kTo"]        = 1.632e-7 # torque coeff (Nm/(rad/s)^2)  (1.79e-9 Nm/RPM^2)
     params["mixerFM"]    = makeMixerFM(params) # Make mixer that calculated Thrust (F) and moments (M) as a function on motor speeds
     params["mixerFMinv"] = inv(params["mixerFM"])
-    params["minThr"]     = 0.368    # Minimum total thrust
-    params["maxThr"]     = 32.00    # Maximum total thrust
-    params["minWmotor"]  = 75       # Minimum motor rotation speed (rad/s)
-    params["maxWmotor"]  = 925      # Maximum motor rotation speed (rad/s)
+    params["minThr"]     = 1.0    # Minimum total thrust
+    params["maxThr"]     = 32.20    # Maximum total thrust
+    params["minWmotor"]  = 277       # Minimum motor rotation speed (rad/s)
+    params["maxWmotor"]  = 1571      # Maximum motor rotation speed (rad/s)
     params["tau"]        = 0.015    # Value for second order system for Motor dynamics
     params["kp"]         = 1.0      # Value for second order system for Motor dynamics
     params["damp"]       = 1.0      # Value for second order system for Motor dynamics

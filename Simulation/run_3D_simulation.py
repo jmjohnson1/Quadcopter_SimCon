@@ -42,7 +42,7 @@ def main():
     # Simulation Setup
     # --------------------------- 
     Ti = 0
-    Ts = 0.0005
+    Ts = 0.002
     Tf = 20
     ifsave = 0
 
@@ -70,7 +70,7 @@ def main():
     quad = Quadcopter(Ti)
     traj = Trajectory(quad, ctrlType, trajSelect)
     ctrl = Control(quad, traj.yawType)
-    wind = Wind('RANDOMSINE', 2.0, 2.0, -180, 180 , -15, 15)
+    wind = Wind('NONE', 2.0, 2.0, -180, 180 , -15, 15)
 
     # Trajectory for First Desired States
     # ---------------------------

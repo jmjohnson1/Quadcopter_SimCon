@@ -352,7 +352,6 @@ class Control:
         C_bn = utils.ypr2Dcm(ypr[0], ypr[1], ypr[2])
         pos_error = self.pos_sp - quad.pos
         integralTerm = self.integralPrev + pos_error*Ts 
-        print(integralTerm)
         integralTerm = np.clip(integralTerm, -1, 1)
         des_acc_n = df_p_gain*pos_error - df_d_gain*quad.vel + df_i_gain*integralTerm
         self.desAcc_b = C_bn @ des_acc_n
