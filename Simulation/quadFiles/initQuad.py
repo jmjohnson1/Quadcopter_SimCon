@@ -14,14 +14,17 @@ import config
 
 
 def sys_params():
-    mB  = 1.2       # mass (kg)
+    mB  = 0.842       # mass (kg)
     g   = 9.81      # gravity (m/s/s)
-    dxm = 0.16      # arm length (m)
-    dym = 0.16      # arm length (m)
+    dxm = 0.15875     # arm length (m)
+    dym = 0.15875      # arm length (m)
     dzm = 0.05      # motor height (m)
-    IB  = np.array([[0.0123, 0,      0     ],
-                    [0,      0.0123, 0     ],
-                    [0,      0,      0.0224]]) # Inertial tensor (kg*m^2)
+    # IB  = np.array([[0.00932, 0,      0     ],
+    #                 [0,      0.01, 0     ],
+    #                 [0,      0,      0.016]]) # Inertial tensor (kg*m^2) !PROBLEMATIC VALUES!
+    IB  = np.array([[0.0048, 0,      0     ],
+                    [0,      0.0054, 0     ],
+                    [0,      0,      0.0085]]) # Inertial tensor (kg*m^2) !PROBLEMATIC VALUES!
     IRzz = 2.7e-5   # Rotor moment of inertia (kg*m^2)
 
 
@@ -42,8 +45,8 @@ def sys_params():
     params["kTo"]        = 1.632e-7 # torque coeff (Nm/(rad/s)^2)  (1.79e-9 Nm/RPM^2)
     params["mixerFM"]    = makeMixerFM(params) # Make mixer that calculated Thrust (F) and moments (M) as a function on motor speeds
     params["mixerFMinv"] = inv(params["mixerFM"])
-    params["minThr"]     = 0.1*4    # Minimum total thrust
-    params["maxThr"]     = 9.18*4   # Maximum total thrust
+    params["minThr"]     = 0.368    # Minimum total thrust
+    params["maxThr"]     = 32.00    # Maximum total thrust
     params["minWmotor"]  = 75       # Minimum motor rotation speed (rad/s)
     params["maxWmotor"]  = 925      # Maximum motor rotation speed (rad/s)
     params["tau"]        = 0.015    # Value for second order system for Motor dynamics

@@ -24,7 +24,8 @@ def fullprint(*args, **kwargs):
     np.set_printoptions(opt)
 
 
-def makeFigures(params, time, pos_all, vel_all, quat_all, omega_all, euler_all, commands, wMotor_all, thrust, torque, sDes_traj, sDes_calc):
+def makeFigures(params, time, pos_all, vel_all, quat_all, omega_all, euler_all, commands, wMotor_all, thrust, torque, sDes_traj, sDes_calc,
+                thrust_b_all, desAcc_n_all, desAcc_b_all):
     x    = pos_all[:,0]
     y    = pos_all[:,1]
     z    = pos_all[:,2]
@@ -199,4 +200,27 @@ def makeFigures(params, time, pos_all, vel_all, quat_all, omega_all, euler_all, 
     plt.legend(['Pos x error','Pos y error','Pos z error'])
     plt.xlabel('Time (s)')
     plt.ylabel('Position Error (m)')
+    plt.draw()
+
+    plt.figure()
+    plt.plot(time, thrust_b_all)
+    plt.grid(True)
+    plt.xlabel('Time (s)')
+    plt.ylabel('Variable: thrust_b3')
+    plt.draw()
+
+    plt.figure()
+    plt.plot(time, desAcc_n_all[:,0], time, desAcc_n_all[:,1], time, desAcc_n_all[:,2])
+    plt.grid(True)
+    plt.legend(['n1', 'n2', 'n3'])
+    plt.xlabel('Time (s)')
+    plt.ylabel('Desired acceleration in the nav frame')
+    plt.draw()
+
+    plt.figure()
+    plt.plot(time, desAcc_b_all[:,0], time, desAcc_b_all[:,1], time, desAcc_b_all[:,2])
+    plt.grid(True)
+    plt.legend(['b1', 'b2', 'b3'])
+    plt.xlabel('Time (s)')
+    plt.ylabel('Desired acceleration in the body frame')
     plt.draw()

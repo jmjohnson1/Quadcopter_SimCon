@@ -68,6 +68,22 @@ def quat2Dcm(q):
 
     return dcm
 
+
+def ypr2Dcm(y, p, r):
+    dcm = np.zeros([3,3])
+    dcm[0, 0] = cos(p)*cos(y)
+    dcm[0, 1] = cos(p)*cos(y)
+    dcm[0, 2] = -sin(p)
+    dcm[1, 0] = sin(r)*sin(p)*cos(y) - cos(r)*sin(y)
+    dcm[1, 1] = sin(r)*sin(p)*sin(y) + cos(r)*cos(y)
+    dcm[1, 2] = sin(r)*cos(p)
+    dcm[2, 0] = cos(r)*sin(p)*cos(y) - sin(r)*sin(y)
+    dcm[2, 1] = cos(r)*sin(p)*sin(y) - sin(r)*cos(y)
+    dcm[2, 2] = cos(r)*cos(p)
+
+    return dcm
+
+
 def RotToQuat(R):
     
     R11 = R[0, 0]

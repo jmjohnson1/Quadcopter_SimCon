@@ -37,7 +37,7 @@ class Trajectory:
 
         self.end_reached = 0
 
-        if (self.ctrlType == "xyz_pos"):
+        if (self.ctrlType == "xyz_pos" or self.ctrlType == "df_xyz"):
             self.T_segment = np.diff(self.t_wps)
 
             if (self.averVel == 1):
@@ -206,7 +206,8 @@ class Trajectory:
 
                 # If arrived for more than xx seconds, increment waypoint index (t_idx)
                 # Replace 'self.t_wps[self.t_idx]' by any number to have a fixed waiting time for all waypoints
-                elif self.arrived and (t-self.t_arrived > self.t_wps[self.t_idx]):   
+                #elif self.arrived and (t-self.t_arrived > self.t_wps[self.t_idx]):   
+                elif self.arrived and (t-self.t_arrived > 2):   
                     self.t_idx += 1
                     self.arrived = False
 
@@ -296,7 +297,7 @@ class Trajectory:
             if (self.xyzType == 1):
                 self.sDes = testVelControl(t)
         
-        elif (self.ctrlType == "xyz_pos"):
+        elif (self.ctrlType == "xyz_pos" or self.ctrlType == "df_xyz"):
             # Hover at [0, 0, 0]
             if (self.xyzType == 0):
                 pass 

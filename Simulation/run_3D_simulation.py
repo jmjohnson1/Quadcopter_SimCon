@@ -42,25 +42,25 @@ def main():
     # Simulation Setup
     # --------------------------- 
     Ti = 0
-    Ts = 0.005
+    Ts = 0.0005
     Tf = 20
     ifsave = 0
 
     # Choose trajectory settings
     # --------------------------- 
-    ctrlOptions = ["xyz_pos", "xy_vel_z_pos", "xyz_vel"]
+    ctrlOptions = ["xyz_pos", "xy_vel_z_pos", "xyz_vel", "df_xyz"]
     trajSelect = np.zeros(3)
 
     # Select Control Type             (0: xyz_pos,                  1: xy_vel_z_pos,            2: xyz_vel)
-    ctrlType = ctrlOptions[0]   
+    ctrlType = ctrlOptions[3]   
     # Select Position Trajectory Type (0: hover,                    1: pos_waypoint_timed,      2: pos_waypoint_interp,    
     #                                  3: minimum velocity          4: minimum accel,           5: minimum jerk,           6: minimum snap
     #                                  7: minimum accel_stop        8: minimum jerk_stop        9: minimum snap_stop
     #                                 10: minimum jerk_full_stop   11: minimum snap_full_stop
     #                                 12: pos_waypoint_arrived     13: pos_waypoint_arrived_wait
-    trajSelect[0] = 5         
+    trajSelect[0] = 13        
     # Select Yaw Trajectory Type      (0: none                      1: yaw_waypoint_timed,      2: yaw_waypoint_interp     3: follow          4: zero)
-    trajSelect[1] = 3           
+    trajSelect[1] = 0           
     # Select if waypoint time is used, or if average speed is used to calculate waypoint time   (0: waypoint time,   1: average speed)
     trajSelect[2] = 1           
     print("Control type: {}".format(ctrlType))
@@ -70,7 +70,7 @@ def main():
     quad = Quadcopter(Ti)
     traj = Trajectory(quad, ctrlType, trajSelect)
     ctrl = Control(quad, traj.yawType)
-    wind = Wind('None', 2.0, 90, -15)
+    wind = Wind('RANDOMSINE', 2.0, 2.0, -180, 180 , -15, 15)
 
     # Trajectory for First Desired States
     # ---------------------------
@@ -98,6 +98,10 @@ def main():
     thr_all        = np.zeros([numTimeStep, len(quad.thr)])
     tor_all        = np.zeros([numTimeStep, len(quad.tor)])
 
+    thrust_b3_all  = np.zeros(numTimeStep)
+    desAcc_n_all   = np.zeros([numTimeStep, len(ctrl.acc_sp)])
+    desAcc_b_all   = np.zeros([numTimeStep, len(ctrl.desAcc_b)])
+
     t_all[0]            = Ti
     s_all[0,:]          = quad.state
     pos_all[0,:]        = quad.pos
@@ -111,6 +115,10 @@ def main():
     wMotor_all[0,:]     = quad.wMotor
     thr_all[0,:]        = quad.thr
     tor_all[0,:]        = quad.tor
+
+    thrust_b3_all[0]    = ctrl.thrust_b3
+    desAcc_n_all[0,:]   = ctrl.acc_sp
+    desAcc_b_all[0,:]    = ctrl.desAcc_b
 
     # Run Simulation
     # ---------------------------
@@ -134,6 +142,10 @@ def main():
         wMotor_all[i,:]      = quad.wMotor
         thr_all[i,:]         = quad.thr
         tor_all[i,:]         = quad.tor
+
+        thrust_b3_all[i]     = ctrl.thrust_b3
+        desAcc_n_all[i,:]    = ctrl.acc_sp
+        desAcc_b_all[i,:]    = ctrl.desAcc_b
         
         i += 1
     
@@ -144,7 +156,8 @@ def main():
     # ---------------------------
 
     # utils.fullprint(sDes_traj_all[:,3:6])
-    utils.makeFigures(quad.params, t_all, pos_all, vel_all, quat_all, omega_all, euler_all, w_cmd_all, wMotor_all, thr_all, tor_all, sDes_traj_all, sDes_calc_all)
+    utils.makeFigures(quad.params, t_all, pos_all, vel_all, quat_all, omega_all, euler_all, w_cmd_all, wMotor_all, thr_all, tor_all, sDes_traj_all, sDes_calc_all,
+                      thrust_b3_all, desAcc_n_all, desAcc_b_all)
     ani = utils.sameAxisAnimation(t_all, traj.wps, pos_all, quat_all, sDes_traj_all, Ts, quad.params, traj.xyzType, traj.yawType, ifsave)
     plt.show()
 

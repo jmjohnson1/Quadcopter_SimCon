@@ -70,6 +70,11 @@ Dr = 0.1
 rate_P_gain = np.array([Pp, Pq, Pr])
 rate_D_gain = np.array([Dp, Dq, Dr])
 
+# Gains for df position controller
+df_p_gain = np.array([9.0, 9.0, 29.0])
+df_d_gain = np.array([12, 12.0, 5.0])
+df_i_gain = np.array([4.0, 4.0, 4.0])
+
 # Max Velocities
 uMax = 5.0
 vMax = 5.0
@@ -81,7 +86,7 @@ velMaxAll = 5.0
 saturateVel_separetely = False
 
 # Max tilt
-tiltMax = 50.0*deg2rad
+tiltMax = 30.0*deg2rad
 
 # Max Rate
 pMax = 200.0*deg2rad
@@ -107,6 +112,10 @@ class Control:
         self.eul_sp    = np.zeros(3)
         self.pqr_sp    = np.zeros(3)
         self.yawFF     = np.zeros(3)
+
+        self.thrust_b3 = 0;
+        self.integralPrev = np.zeros(3)
+        self.desAcc_b = np.zeros(3)
 
     
     def controller(self, traj, quad, sDes, Ts):
@@ -144,6 +153,12 @@ class Control:
             self.saturateVel()
             self.z_vel_control(quad, Ts)
             self.xy_vel_control(quad, Ts)
+            self.thrustToAttitude(quad, Ts)
+            self.attitude_control(quad, Ts)
+            self.rate_control(quad, Ts)
+        elif (traj.ctrlType == "df_xyz"):
+            self.df_xyz_accelerations(quad, Ts)
+            self.df_calculate_attitude(quad, Ts)
             self.thrustToAttitude(quad, Ts)
             self.attitude_control(quad, Ts)
             self.rate_control(quad, Ts)
@@ -332,4 +347,45 @@ class Control:
 
         att_P_gain[2] = roll_pitch_gain
 
-    
+    def df_xyz_accelerations(self, quad, Ts):
+        ypr = utils.quatToYPR_ZYX(quad.quat)
+        C_bn = utils.ypr2Dcm(ypr[0], ypr[1], ypr[2])
+        pos_error = self.pos_sp - quad.pos
+        integralTerm = self.integralPrev + pos_error*Ts 
+        print(integralTerm)
+        integralTerm = np.clip(integralTerm, -1, 1)
+        des_acc_n = df_p_gain*pos_error - df_d_gain*quad.vel + df_i_gain*integralTerm
+        self.desAcc_b = C_bn @ des_acc_n
+
+
+        desThrust = quad.params["mB"]*(des_acc_n[2]/cos(ypr[1])/cos(ypr[2]) - quad.params["g"]/cos(ypr[1])/cos(ypr[2]))
+        # The Thrust limits are negated and swapped due to NED-frame
+        uMax = -quad.params["minThr"]
+        uMin = -quad.params["maxThr"]
+
+        self.thrust_b3 = np.clip(desThrust, uMin, uMax)
+        self.acc_sp = des_acc_n
+
+    def df_calculate_attitude(self, quad, Ts):
+        maxAngle_sinArg = sin(30*deg2rad);
+        z_acc_sp = self.thrust_b3/quad.params["mB"]
+        ypr = utils.quatToYPR_ZYX(quad.quat)
+        yaw = ypr[0]
+        a1 = self.acc_sp[0]
+        a2 = self.acc_sp[1]
+        
+        sinRoll = (sin(yaw)*a1 - cos(yaw)*a2)/z_acc_sp
+        sinRoll = np.clip(sinRoll, -maxAngle_sinArg, maxAngle_sinArg)
+        sinPitch = (cos(yaw)*a1 + sin(yaw)*a2)/sqrt(1 - sinRoll**2)/z_acc_sp
+        sinPitch = np.clip(sinPitch, -maxAngle_sinArg, maxAngle_sinArg)
+
+        roll = np.arcsin(sinRoll);
+        pitch = np.arcsin(sinPitch);
+
+        C_bn = utils.ypr2Dcm(yaw, pitch, roll)
+        thrust_b = np.array([0, 0, self.thrust_b3])
+
+        self.thrust_sp = C_bn.T @ thrust_b
+
+
+
