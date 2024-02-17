@@ -71,9 +71,9 @@ rate_P_gain = np.array([Pp, Pq, Pr])
 rate_D_gain = np.array([Dp, Dq, Dr])
 
 # Gains for df position controller
-df_p_gain = np.array([9.0, 9.0, 29.0])
-df_d_gain = np.array([12, 12.0, 5.0])
+df_p_gain = np.array([8.0, 8.0, 31.0])
 df_i_gain = np.array([4.0, 4.0, 4.0])
+df_d_gain = np.array([10.0, 10.0, 16.0])
 
 # Max Velocities
 uMax = 5.0
@@ -353,6 +353,7 @@ class Control:
         pos_error = self.pos_sp - quad.pos
         integralTerm = self.integralPrev + pos_error*Ts 
         integralTerm = np.clip(integralTerm, -1, 1)
+        self.integralPrev = integralTerm
         des_acc_n = df_p_gain*pos_error - df_d_gain*quad.vel + df_i_gain*integralTerm
         self.desAcc_b = C_bn @ des_acc_n
 

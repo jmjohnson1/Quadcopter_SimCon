@@ -19,13 +19,10 @@ def sys_params():
     dxm = 0.15875     # arm length (m)
     dym = 0.15875      # arm length (m)
     dzm = 0.05      # motor height (m)
-    # IB  = np.array([[0.00932, 0,      0     ],
-    #                 [0,      0.01, 0     ],
-    #                 [0,      0,      0.016]]) # Inertial tensor (kg*m^2) !PROBLEMATIC VALUES!
-    IB  = np.array([[0.0048, 0,      0     ],
-                    [0,      0.0054, 0     ],
-                    [0,      0,      0.0085]]) # Inertial tensor (kg*m^2) !PROBLEMATIC VALUES!
-    IRzz = 2.7e-5   # Rotor moment of inertia (kg*m^2)
+    IB  = np.array([[0.00529, 0,      0     ],
+                    [0,      0.003875, 0     ],
+                    [0,      0,      0.008445]]) # Inertial tensor (kg*m^2)
+    IRzz = 1.4113E-02   # Rotor moment of inertia (kg*m^2)
 
 
     params = {}
@@ -41,8 +38,8 @@ def sys_params():
     # params["interpYaw"] = bool(False)       # Interpolate Yaw setpoints in waypoint trajectory
 
     params["Cd"]         = 0.1
-    params["kTh"]        = 1.3047e-5 # thrust coeff (N/(rad/s)^2)  (1.18e-7 N/RPM^2)
-    params["kTo"]        = 1.632e-7 # torque coeff (Nm/(rad/s)^2)  (1.79e-9 Nm/RPM^2)
+    params["kTh"]        = 1.3047e-5 # thrust coeff (N/(rad/s)^2)
+    params["kTo"]        = 1.632e-7 # torque coeff (Nm/(rad/s)^2)
     params["mixerFM"]    = makeMixerFM(params) # Make mixer that calculated Thrust (F) and moments (M) as a function on motor speeds
     params["mixerFMinv"] = inv(params["mixerFM"])
     params["minThr"]     = 1.0    # Minimum total thrust
