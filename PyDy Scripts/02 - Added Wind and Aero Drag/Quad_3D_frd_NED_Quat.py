@@ -61,7 +61,7 @@ q0d, q1d, q2d, q3d, pd, qd, rd = dynamicsymbols('q0 q1 q2 q3 p q r', 1)
 
 # Constants
 # ---------------------------
-mB, g, dxm, dym, dzm, IBxx, IByy, IBzz, IRzz, wM1, wM2, wM3, wM4 = symbols('mB g dxm dym dzm IBxx IByy IBzz IRzz wM1 wM2 wM3 wM4')
+mB, g, dxmf, dymf, dxmb, dymb, dzm, IBxx, IByy, IBzz, IRzz, wM1, wM2, wM3, wM4 = symbols('mB g dxmf dymf dxmb dymb dzm IBxx IByy IBzz IRzz wM1 wM2 wM3 wM4')
 ThrM1, ThrM2, ThrM3, ThrM4, TorM1, TorM2, TorM3, TorM4 = symbols('ThrM1 ThrM2 ThrM3 ThrM4 TorM1 TorM2 TorM3 TorM4')
 qW1, qW2, velW, Cd = symbols('qW1 qW2 velW Cd')
 
@@ -83,10 +83,10 @@ Bcm.set_vel(N, Bcm.pos_from(No).dt(N))
 # M1 is front left, then clockwise numbering
 # dzm is positive for motors above center of mass
 # ---------------------------
-M1.set_pos(Bcm,  dxm*B.x - dym*B.y - dzm*B.z)
-M2.set_pos(Bcm,  dxm*B.x + dym*B.y - dzm*B.z)
-M3.set_pos(Bcm, -dxm*B.x + dym*B.y - dzm*B.z)
-M4.set_pos(Bcm, -dxm*B.x - dym*B.y - dzm*B.z)
+M1.set_pos(Bcm,  dxmf*B.x - dymf*B.y - dzm*B.z)
+M2.set_pos(Bcm,  dxmf*B.x + dymf*B.y - dzm*B.z)
+M3.set_pos(Bcm, -dxmb*B.x + dymb*B.y - dzm*B.z)
+M4.set_pos(Bcm, -dxmb*B.x - dymb*B.y - dzm*B.z)
 M1.v2pt_theory(Bcm, N, B)
 M2.v2pt_theory(Bcm, N, B)
 M3.v2pt_theory(Bcm, N, B)

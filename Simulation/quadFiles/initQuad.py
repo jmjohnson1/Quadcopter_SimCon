@@ -37,7 +37,7 @@ def sys_params():
     params["useIntergral"] = bool(False)    # Include integral gains in linear velocity control
     # params["interpYaw"] = bool(False)       # Interpolate Yaw setpoints in waypoint trajectory
 
-    params["Cd"]         = 0.1
+    params["Cd"]         = 0.0
     params["kTh"]        = 1.3047e-5 # thrust coeff (N/(rad/s)^2)
     params["kTo"]        = 1.632e-7 # torque coeff (Nm/(rad/s)^2)
     params["mixerFM"]    = makeMixerFM(params) # Make mixer that calculated Thrust (F) and moments (M) as a function on motor speeds
