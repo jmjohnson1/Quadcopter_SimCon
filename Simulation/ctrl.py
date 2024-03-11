@@ -354,7 +354,9 @@ class Control:
         integralTerm = self.integralPrev + pos_error*Ts 
         integralTerm = np.clip(integralTerm, -1, 1)
         self.integralPrev = integralTerm
-        des_acc_n = df_p_gain*pos_error - df_d_gain*quad.vel + df_i_gain*integralTerm
+
+        velError = self.vel_sp - quad.vel
+        des_acc_n = df_p_gain*pos_error + df_d_gain*velError + df_i_gain*integralTerm
         self.desAcc_b = C_bn @ des_acc_n
 
 
